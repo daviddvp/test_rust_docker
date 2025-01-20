@@ -1,5 +1,5 @@
-# Usa una imagen base de Rust para la plataforma amd64
-FROM --platform=$BUILDPLATFORM rust:alpine3.21 AS builder
+# Etapa de construcción
+FROM rust:alpine3.21 AS builder
 
 # Establece el directorio de trabajo
 WORKDIR /usr/src/app
@@ -7,17 +7,23 @@ WORKDIR /usr/src/app
 # Copia los archivos del proyecto
 COPY . .
 
-# Compila el proyecto en modo release
-RUN cargo build --release
+# Instala dependencias necesarias para compilar
+RUN apk add --no-cache musl-dev
 
-# Usa una imagen ligera para la ejecución (sin Rust ni Cargo)
+# Ejecuta los tests sin la opción --locked
+RUN cargo test --release --verbose
+
+# Compila el proyecto en modo release
+RUN cargo build --release --verbose
+
+# Etapa final
 FROM alpine:latest
 
-# Instala dependencias necesarias (si las necesitas, como OpenSSL, por ejemplo)
+# Instala dependencias necesarias en la imagen ligera
 RUN apk add --no-cache libssl3
 
-# Copia el binario compilado desde la etapa anterior
+# Copia el binario desde la etapa de construcción
 COPY --from=builder /usr/src/app/target/release/test_rust_docker /usr/local/bin/test_rust_docker
 
-# Establece el binario como el comando de inicio
+# Define el comando de inicio
 CMD ["test_rust_docker"]

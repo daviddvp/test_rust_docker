@@ -1,4 +1,5 @@
 use std::io;
+use test_rust_docker::*;
 
 fn main() {
     println!("Calculadora simple en Rust");
@@ -35,16 +36,13 @@ fn main() {
         let num2 = leer_numero();
 
         match opcion {
-            1 => println!("Resultado: {}", num1 + num2),
-            2 => println!("Resultado: {}", num1 - num2),
-            3 => println!("Resultado: {}", num1 * num2),
-            4 => {
-                if num2 == 0.0 {
-                    println!("Error: División por cero no permitida.");
-                } else {
-                    println!("Resultado: {}", num1 / num2);
-                }
-            }
+            1 => println!("Resultado: {}", sumar(num1, num2)),
+            2 => println!("Resultado: {}", restar(num1, num2)),
+            3 => println!("Resultado: {}", multiplicar(num1, num2)),
+            4 => match dividir(num1, num2) {
+                Ok(resultado) => println!("Resultado: {}", resultado),
+                Err(err) => println!("Error: {}", err),
+            },
             _ => println!("Opción no válida. Por favor, selecciona entre 1 y 5."),
         }
     }
