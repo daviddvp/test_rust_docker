@@ -1,4 +1,4 @@
-name: Deploy Rust App
+name: Rust CI
 on: 
   push:
     branches:
@@ -38,6 +38,25 @@ jobs:
   deploy:
     needs: build
     uses: ./.github/workflows/deploy.yml
+  show_logs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download and show build logs
+        uses: actions/download-artifact@v4
+        with:
+          name: build-logs
+  
+      - name: Download and show test logs
+        uses: actions/download-artifact@v4
+        with:
+          name: test-logs
+  
+      - name: Display logs
+        run: |
+          echo "===== Build Logs ====="
+          cat build.log
+          echo "===== Test Logs ====="
+          cat test.log
   reports:
     needs: [test, build, deploy]
     if: failure()
