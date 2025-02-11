@@ -1,0 +1,11 @@
+name: Deploy Rust App
+on: workflow_call
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List files
+        run: ls -la
+      - name: Deploy
+        run: echo "Deploying Rust App"
+      
